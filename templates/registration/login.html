@@ -1,0 +1,10 @@
+<h1>Login</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+</form>
+
+<p>Don't have an account?</p>
+<!-- Button to redirect to the registration page -->
+<a href="{% url 'register' %}" class="btn">Register</a>

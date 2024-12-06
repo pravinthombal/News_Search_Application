@@ -1,0 +1,174 @@
+{% comment %} <!DOCTYPE html>
+<html>
+<head><title>Search News</title></head>
+<body>
+    <h1>Search News</h1>
+    <form method="get" action=".">
+        <input type="text" name="keyword" placeholder="Enter keyword" required>
+
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date }}">  
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+
+        <label for="source_name">Source Name:</label>
+        <input type="text" id="source_name" name="source_name" placeholder="Enter source name" value="{{ source_name }}">
+
+        <label for="language_name">Language:</label>
+        <input type="text" id="language_name" name="language_name" placeholder="Enter language" value="{{ language_name }}">
+
+        <label for="category_name">Category:</label>
+        <input type="text" id="category_name" name="category_name" placeholder="Enter category" value="{{ category_name }}">
+
+        <br>
+        <button type="submit"> Search </button>
+    </form>
+
+    <br><br>
+    <a href="{% url 'search_history' %}">View Search History</a>
+    <br><br>
+    {% if keyword_not_found  %}
+    <strong>{{ keyword_not_found }} "{{ keyword }}" </strong> <br>
+    {% endif %}
+     {% if articles %} 
+    <h2>Results for {{ keyword }}</h2>
+    <ul>
+        {% for article in articles %}
+        <li>
+            <a href="{{ article.url }}" target="_blank">{{ article.title }}</a>
+            <small>{{ article.published_at }}</small> 
+            <div class="box">
+            <strong>{{ article.title }}</strong><br>
+            <small>By {{ article.author|default:"Unknown" }} on {{ article.published_at|date:"M d, Y H:i" }}</small><br>
+            <small>Source: {{ article.source }}</small><br>
+            <p>{{ article.description }}</p>
+            {% if article.url_to_image %}
+                <img src="{{ article.url_to_image }}" alt="Article Image" style="width:200px;"><br>
+            {% endif %}
+            <strong> language: {{ article.language}} <strong>
+            <strong> category: {{ article.category}} <strong><br>
+            <a href="{{ article.url }}" target="_blank">Read Full Article</a><br><br>
+            </div>
+        </li>
+        {% endfor %}
+
+        {% if search_time_limit %} 
+        <strong>{{ search_time_limit }}  </strong>
+        {% endif %}
+    </ul>
+
+
+    {% endif %} 
+   
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head><title>Search News</title></head>
+<p>
+    Logged in as: {{ request.user.username }} | 
+    <a href="{% url 'logout' %}">Logout</a>
+</p>
+<body>
+    <h1>Search News</h1>
+    <form method="POST" action=".">
+        {% csrf_token %}
+        <input type="text" name="keyword" placeholder="Enter keyword" required>
+
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date }}">  
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+
+        <label for="source_name">Source Name:</label>
+        <input type="text" id="source_name" name="source_name" placeholder="Enter source name" value="{{ source_name }}">
+
+        <label for="language_name">Language:</label>
+        <input type="text" id="language_name" name="language_name" placeholder="Enter language" value="{{ language_name }}">
+
+        <label for="category_name">Category:</label>
+        <input type="text" id="category_name" name="category_name" placeholder="Enter category" value="{{ category_name }}">
+
+        <br><br>
+        <button type="submit"> Search </button>
+    </form>
+
+  
+    <br>
+    <!-- Move the time limit message here to be displayed before articles -->
+    {% if search_time_limit %} 
+        <strong>{{ search_time_limit }}</strong><br><br>
+    {% endif %}
+
+    {% if keyword_not_found %}
+        <strong>{{ keyword_not_found }} "{{ keyword }}" </strong> <br>
+    {% endif %}
+
+
+    <br><br>
+    <a href="{% url 'search_history' %}">View Search History</a>
+    <br><br>
+
+
+    {% if articles %}
+        <h2>Results for {{ keyword }}</h2>
+        <ul>
+            {% for article in articles %}
+            <li>
+                <a href="{{ article.url }}" target="_blank">{{ article.title }}</a>
+                <small>{{ article.published_at }}</small> 
+                <div class="box">
+                    <strong>{{ article.title }}</strong><br>
+                    <small>By {{ article.author|default:"Unknown" }} on {{ article.published_at|date:"M d, Y H:i" }}</small><br>
+                    <small>Source: {{ article.source }}</small><br>
+                    <p>{{ article.description }}</p>
+                    {% if article.url_to_image %}
+                        <img src="{{ article.url_to_image }}" alt="Article Image" style="width:200px;"><br>
+                    {% endif %}
+                    <strong> language: {{ article.language}} </strong>
+                    <strong> category: {{ article.category}} </strong><br>
+                    <a href="{{ article.url }}" target="_blank">Read Full Article</a><br><br>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %} 
+</body>
+</html>
+

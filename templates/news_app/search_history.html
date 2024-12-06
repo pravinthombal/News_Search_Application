@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>Search History</title></head>
+Logged in as: {{ request.user.username }} | 
+<a href="{% url 'logout' %}">Logout</a>
+<body>
+    {% if search_queries %}
+    <h1>Search History</h1>
+    <ul>
+        {% for search in search_queries %}
+        <li>
+            <strong>{{ search.keyword }}</strong>&nbsp;&nbsp;
+            <a href="{% url 'view_results' search.id %}">View Results</a> &nbsp;&nbsp;
+            <a href="{% url 'refresh_search' search.id %}">Refresh Results</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>You haven't searched for any news yet.</p>
+    {% endif %}
+    <a href="{% url 'search_news' %}">Back to Search</a>
+</body>
+</html>
