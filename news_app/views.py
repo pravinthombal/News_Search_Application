@@ -69,12 +69,9 @@ def fetch_news_articles(keyword, last_published_at=None):
         list: A list of articles fetched from the News API.
     """
     if last_published_at:
-        print('****************',last_published_at, '****************')
         last_published_at += timedelta(seconds=1)
         published_after = last_published_at.strftime('%Y-%m-%dT%H:%M:%SZ')
-        print('****************',published_after, '****************')
         url = f"https://newsapi.org/v2/everything?q={keyword}&apiKey={settings.NEWS_API_KEY}&from={published_after}"
-        print('****************',url, '****************')
     else:
         url = f"https://newsapi.org/v2/everything?q={keyword}&apiKey={settings.NEWS_API_KEY}"
 
