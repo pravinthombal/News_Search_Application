@@ -254,8 +254,8 @@ def refresh_search(request, search_query_id):
     most_recent_article = Article.objects.filter(search_query=search_query).order_by('-published_at').first()
     if most_recent_article:
         last_published_at = most_recent_article.published_at
-    else:
-        last_published_at = timezone.now() - timedelta(days=365)  # 1 year ago
+    # else:
+    #     last_published_at = timezone.now() - timedelta(days=365)  # 1 year ago
     articles_data = fetch_news_articles(keyword, last_published_at)
     for article_data in articles_data:
         Article.objects.create(
