@@ -11,7 +11,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .forms import SearchForm, CustomUserCreationForm
-
+from datetime import timedelta
+from django.utils.timezone import make_aware, is_naive
 
 
 
@@ -68,8 +69,12 @@ def fetch_news_articles(keyword, last_published_at=None):
         list: A list of articles fetched from the News API.
     """
     if last_published_at:
+        print('****************',last_published_at, '****************')
+        last_published_at += timedelta(seconds=1)
         published_after = last_published_at.strftime('%Y-%m-%dT%H:%M:%SZ')
+        print('****************',published_after, '****************')
         url = f"https://newsapi.org/v2/everything?q={keyword}&apiKey={settings.NEWS_API_KEY}&from={published_after}"
+        print('****************',url, '****************')
     else:
         url = f"https://newsapi.org/v2/everything?q={keyword}&apiKey={settings.NEWS_API_KEY}"
 
@@ -161,13 +166,17 @@ def search_news(request):
                     return render(request, 'news_app/search.html', {'search_time_limit': f"Please wait at least 15 minutes before searching '{keyword}' again.", 'keyword': keyword})
 
                 articles = Article.objects.filter(search_query=search_query)
-
                 if start_date:
-                    start_date = datetime.strptime(start_date, '%Y-%m-%d')  
+                    start_date = datetime.combine(start_date, datetime.min.time())
+                    start_date= make_aware(start_date)
                     articles = articles.filter(published_at__gte=start_date)
+
                 if end_date:
-                    end_date = datetime.strptime(end_date, '%Y-%m-%d')  
+                    end_date = datetime.combine(end_date, datetime.max.time())
+                    end_date= make_aware(end_date)
                     articles = articles.filter(published_at__lte=end_date)
+
+     
                 if user_source_name:
                     articles = articles.filter(source__icontains=user_source_name)
                 if language_name:
@@ -218,6 +227,7 @@ def view_results(request, search_query_id):
     
     search_query = get_object_or_404(SearchQuery, id=search_query_id, user=request.user)
     articles = Article.objects.filter(search_query=search_query).order_by('-published_at')
+    print('*******************: ',type(search_query.id))
     return render(request, 'news_app/view_results.html', {'articles': articles, 'keyword': search_query.keyword})
 
 @login_required
@@ -261,29 +271,3 @@ def refresh_search(request, search_query_id):
         )
     articles = Article.objects.filter(search_query=search_query).order_by('-published_at')
     return render(request, 'news_app/view_results.html', {'articles': articles, 'keyword': search_query.keyword})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
